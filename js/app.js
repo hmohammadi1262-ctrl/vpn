@@ -846,7 +846,23 @@ function renderAdmin(app) {
         SITE.hero.cta2 = d.heroCta2;
         SITE.hero.video = d.heroVideo;
         SITE.hero.poster = d.heroPoster;
-        document.getElementById('content-save-msg').innerHTML = '<div class="form-success">تغییرات ذخیره شد.</div>';
+        // Persist content changes to localStorage so they survive page reloads
+        localStorage.setItem('luxora_content', JSON.stringify({
+          announcement: SITE.announcement,
+          hero: {
+            eyebrow: SITE.hero.eyebrow,
+            title: SITE.hero.title,
+            desc: SITE.hero.desc,
+            cta: SITE.hero.cta,
+            ctaHref: SITE.hero.ctaHref,
+            cta2: SITE.hero.cta2,
+            cta2Href: SITE.hero.cta2Href,
+            features: SITE.hero.features,
+            video: SITE.hero.video,
+            poster: SITE.hero.poster
+          }
+        }));
+        document.getElementById('content-save-msg').innerHTML = '<div class="form-success">تغییرات ذخیره شد و در صفحه اصلی اعمال شد.</div>';
         toast('محتوای صفحه به‌روزرسانی شد', 'success');
         renderAnnouncementBar();
       });
@@ -935,6 +951,29 @@ function bindProductCards() {
       toast(Store.isWishlisted(id) ? 'به علاقه‌مندی‌ها اضافه شد' : 'از علاقه‌مندی‌ها حذف شد', 'success');
     });
   });
+
+  // Desktop product card hover — subtle 3D perspective tilt
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.querySelectorAll('.product-card').forEach(card => {
+      if (card._tiltBound) return;
+      card._tiltBound = true;
+      card.style.transformStyle = 'preserve-3d';
+      card.style.willChange = 'transform';
+      card.addEventListener('mouseenter', () => {
+        card.style.transition = 'box-shadow 0.3s ease, border-color 0.3s ease';
+      });
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `translateY(-6px) perspective(800px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transition = '';
+        card.style.transform = '';
+      });
+    });
+  }
 }
 
 function bindNewsletterForm() {
@@ -1122,6 +1161,15 @@ function init() {
       const parsed = JSON.parse(savedProducts);
       PRODUCTS.length = 0;
       PRODUCTS.push(...parsed);
+    } catch(e) {}
+  }
+  // Load admin-edited content (hero, announcement, etc.) if available
+  const savedContent = localStorage.getItem('luxora_content');
+  if (savedContent) {
+    try {
+      const c = JSON.parse(savedContent);
+      if (c.announcement) SITE.announcement = c.announcement;
+      if (c.hero) Object.assign(SITE.hero, c.hero);
     } catch(e) {}
   }
   renderAnnouncementBar();
