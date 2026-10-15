@@ -74,6 +74,7 @@ function navigate(href) { location.hash = href; }
 function router() {
   const { parts } = getRoute();
   const app = document.getElementById('app-content');
+  if (typeof killAnimations === 'function') killAnimations();
   window.scrollTo(0, 0);
 
   if (parts.length === 0) renderHome(app);
@@ -138,22 +139,44 @@ function productCard(p) {
 // ============================================================
 function renderHome(app) {
   app.innerHTML = `
-    <!-- HERO -->
-    <section class="hero">
-      <div class="container">
-        <div class="hero-content">
-          <span class="hero-eyebrow">${SITE.hero.eyebrow}</span>
-          <h1 class="hero-title">${SITE.hero.title}</h1>
-          <p class="hero-desc">${SITE.hero.desc}</p>
-          <div class="hero-cta">
-            <a href="${SITE.hero.ctaHref}" class="btn-primary">${SITE.hero.cta} ${ICONS.arrowLeft}</a>
-          </div>
-          <div class="hero-features">
-            ${SITE.hero.features.map(f => `<div class="hero-feature">${ICONS.shield}<span>${f}</span></div>`).join('')}
+    <!-- HERO VIDEO -->
+    <section class="hero-video-section" id="hero-video">
+      <div class="hero-video-bg">
+        <video autoplay muted loop playsinline preload="auto"
+               poster="${SITE.hero.poster}"
+               src="${SITE.hero.video}"></video>
+      </div>
+      <div class="container hero-video-content">
+        <span class="hero-eyebrow">${SITE.hero.eyebrow}</span>
+        <h1 class="hero-title">${SITE.hero.title}</h1>
+        <p class="hero-desc">${SITE.hero.desc}</p>
+        <div class="hero-cta-row">
+          <a href="${SITE.hero.ctaHref}" class="btn-primary">${SITE.hero.cta} ${ICONS.arrowLeft}</a>
+          <a href="${SITE.hero.cta2Href}" class="btn-outline-light">${SITE.hero.cta2}</a>
+        </div>
+        <div class="hero-features">
+          ${SITE.hero.features.map(f => `<div class="hero-feature">${ICONS.shield}<span>${f}</span></div>`).join('')}
+        </div>
+      </div>
+      <div class="hero-scroll-hint">${ICONS.arrowLeft}<span>اسکرول کنید</span></div>
+    </section>
+
+    <!-- STORYTELLING -->
+    <section class="storytelling-section" id="storytelling">
+      <div class="container storytelling-grid">
+        <div class="storytelling-image">
+          <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&auto=format&fit=crop&q=80" alt="هنر جواهرسازی">
+          <div class="storytelling-image-badge">
+            <span class="gold-line"></span>
+            <span>طلای ۱۸ عیار</span>
           </div>
         </div>
-        <div class="hero-image">
-          <img src="https://images.unsplash.com/photo-1585960622850-ed33c41d6418?w=900&auto=format&fit=crop&q=80" alt="مدل با جواهرات لوکسورا">
+        <div class="storytelling-content">
+          <span class="eyebrow">هنر ظرافت</span>
+          <h2 class="title">داستان هر جواهر</h2>
+          <p>هر قطعه از مجموعه لوکسورا، حاصل تلفیق هنر دست، تجربه‌ی سالیان و اشتیاق به خلق زیبایی است. از انتخاب نگین‌های درخشان تا طراحی نهایی، گامی در مسیر کمال برداشته‌ایم.</p>
+          <p>ما باور داریم هر جواهر باید روایتی از شخصیت و سلیقه‌ی دارنده‌اش باشد. به همین دلیل، در هر طراحی، ظرافت و اصالت را به هم می‌آمیزیم.</p>
+          <a href="#/about" class="btn-primary">داستان ما ${ICONS.arrowLeft}</a>
         </div>
       </div>
     </section>
@@ -168,7 +191,7 @@ function renderHome(app) {
         </div>
         <div class="categories-grid">
           ${SITE.categories.map(c => `
-            <a href="#/products?cat=${c.slug}" class="category-card">
+            <a href="#/products?cat=${c.slug}" class="category-card category-card-3d">
               <div class="category-image"><img src="${c.image}" alt="${c.name}" loading="lazy"></div>
               <h3 class="category-name">${c.name}</h3>
               <span class="category-link">مشاهده محصولات</span>
@@ -188,6 +211,30 @@ function renderHome(app) {
         </div>
         <div class="products-grid">
           ${PRODUCTS.filter(p => p.featured).map(productCard).join('')}
+        </div>
+      </div>
+    </section>
+
+    <!-- SHOWCASE -->
+    <section class="showcase-section" id="showcase">
+      <div class="showcase-stage">
+        <div class="showcase-img"><img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=1200&auto=format&fit=crop&q=80" alt="گردنبند سلطنتی"></div>
+        <div class="showcase-img"><img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=1200&auto=format&fit=crop&q=80" alt="انگشتر الماس"></div>
+        <div class="showcase-img"><img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=1200&auto=format&fit=crop&q=80" alt="دستبند کلاسیک"></div>
+        <div class="showcase-text">
+          <span class="showcase-eyebrow">درخشش سلطنتی</span>
+          <h2>ست گردنبند سلطنتی</h2>
+          <p>تلفیقی از طلای ۱۸ عیار و نگین‌های درخشان، طراحی‌شده برای لحظه‌های خاص شما.</p>
+        </div>
+        <div class="showcase-text">
+          <span class="showcase-eyebrow">زیبایی در سادگی</span>
+          <h2>انگشتر تک‌نگین</h2>
+          <p>نگین مرکزی درخشان در قابی از طلای اصیل، نمادی از ظرافت بی‌پایان.</p>
+        </div>
+        <div class="showcase-text">
+          <span class="showcase-eyebrow">کلاسیک ماندگار</span>
+          <h2>دستبند نگین‌دار</h2>
+          <p>طراحی منحصربه‌فرد با نگین‌های ریزدوز، برازنده‌ی مچ دست شما.</p>
         </div>
       </div>
     </section>
@@ -221,6 +268,7 @@ function renderHome(app) {
   `;
   bindProductCards();
   bindNewsletterForm();
+  if (typeof initAnimations === 'function') initAnimations();
 }
 
 // ============================================================
@@ -780,6 +828,9 @@ function renderAdmin(app) {
           <div class="form-group"><label>عنوان اصلی هیرو</label><input type="text" name="heroTitle" value="${SITE.hero.title.replace('\n', ' ')}"></div>
           <div class="form-group"><label>توضیحات هیرو</label><textarea name="heroDesc">${SITE.hero.desc}</textarea></div>
           <div class="form-group"><label>متن دکمه هیرو</label><input type="text" name="heroCta" value="${SITE.hero.cta}"></div>
+          <div class="form-group"><label>متن دکمه دوم هیرو</label><input type="text" name="heroCta2" value="${SITE.hero.cta2 || ''}"></div>
+          <div class="form-group"><label>نشانی ویدیوی هیرو</label><input type="url" name="heroVideo" value="${SITE.hero.video || ''}" placeholder="https://...mp4"></div>
+          <div class="form-group"><label>تصویر پشتیبان ویدیو (پوستر)</label><input type="url" name="heroPoster" value="${SITE.hero.poster || ''}" placeholder="https://..."></div>
           <button type="submit" class="btn-primary" style="width:100%;justify-content:center;">ذخیره تغییرات</button>
           <div id="content-save-msg"></div>
         </form>
@@ -792,6 +843,9 @@ function renderAdmin(app) {
         SITE.hero.title = d.heroTitle;
         SITE.hero.desc = d.heroDesc;
         SITE.hero.cta = d.heroCta;
+        SITE.hero.cta2 = d.heroCta2;
+        SITE.hero.video = d.heroVideo;
+        SITE.hero.poster = d.heroPoster;
         document.getElementById('content-save-msg').innerHTML = '<div class="form-success">تغییرات ذخیره شد.</div>';
         toast('محتوای صفحه به‌روزرسانی شد', 'success');
         renderAnnouncementBar();

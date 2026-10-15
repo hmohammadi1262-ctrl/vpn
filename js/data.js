@@ -25,15 +25,19 @@ const SITE = {
   ],
   hero: {
     eyebrow: 'زیبایی، به سبک شما',
-    title: 'درخشش ماندگار،\nبرای همیشه شما',
-    desc: 'مجموعه‌ای چشم‌نواز از جواهرات ظریف و اصیل؛ تلفیقی از هنر، زیبایی و شکوهی ماندگار.',
-    cta: 'مشاهده مجموعه‌ها',
+    title: 'درخشش، فراتر از تصور',
+    desc: 'جواهراتی که ظرافت را به تجربه‌ای ماندگار تبدیل می‌کنند.',
+    cta: 'کشف مجموعه جواهرات',
     ctaHref: '#/products',
+    cta2: 'مشاهده پرفروش‌ها',
+    cta2Href: '#/products',
     features: [
       'ضمانت اصالت کالا',
       'پرداخت امن',
       'ارسال رایگان'
-    ]
+    ],
+    video: 'https://media.base44.com/videos/public/6acf280fef49c1e17f48ef4d/9c77d592d_PixVerse_V6_Fusion_540P_image1_Create_a_hyperr2.mp4',
+    poster: 'https://images.unsplash.com/photo-1585960622850-ed33c41d6418?w=1200&auto=format&fit=crop&q=80'
   },
   categories: [
     { slug: 'necklace', name: 'گردنبند', image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=500&auto=format&fit=crop&q=80' },
